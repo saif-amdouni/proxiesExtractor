@@ -59,7 +59,7 @@ if __name__ == "__main__":
     parser.add_argument('--country',default=None,type=str, help='Retrieve proxies from specific country')
     parser.add_argument('--maxNumber',default=10,type=int, help='The maximum number of proxies to test')
     parser.add_argument('--timeOut',default=2,type=int, help='timeout')
-    parser.add_argument('-o',default=2,type=int, help='output file')
+    parser.add_argument('-o',default="output.csv",type=str, help='output file')
 
     args = parser.parse_args()
 
