@@ -2,6 +2,8 @@ import requests
 from bs4 import BeautifulSoup as bs
 import pandas as pd
 from tqdm import tqdm
+import argparse
+
 
 class proxiesExtractor:
     def __init__(self, country = None) -> None:
@@ -44,5 +46,16 @@ class proxiesExtractor:
         self.dfProxies.to_excel("proxies.xlsx",index=False)
 
 if __name__ == "__main__":
-    ips= proxiesExtractor("US")
-    ips.testProxies()
+
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--country',default=None,type=str, help='Retrieve proxies from specific country')
+    parser.add_argument('--maxNumber',default=10,type=int, help='The maximum number of proxies to test')
+    parser.add_argument('--timeOut',default=2,type=int, help='timeout')
+
+    args = parser.parse_args()
+    print(args)
+    ips= proxiesExtractor(country = args.country)
+    ips.testProxies(maxNumber = args.maxNumber, timeOut = args.timeOut)
+
+
