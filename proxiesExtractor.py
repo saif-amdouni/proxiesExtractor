@@ -6,10 +6,14 @@ import argparse
 
 
 class proxiesExtractor:
-    def __init__(self, country = None) -> None:
+    def __init__(self, country = None , output = None) -> None:
         self.proxyUrl = "https://free-proxy-list.net/"
         self.TestIpUrl = "http://httpbin.org/ip"
         self.dfProxies = pd.DataFrame(columns=["proxy","ResponseTime","isAvailable"])
+        if output :
+            self.output = output
+        else :
+            self.output = "output.csv"
         print("Getting free proxies from source ...!")
         self.proxies = self.get_free_proxies(country)
         if len(self.proxies)>0:
@@ -43,7 +47,10 @@ class proxiesExtractor:
             except:
                 # if the proxy Ip is pre occupied
                 self.dfProxies = self.dfProxies.append({"proxy": proxy,"ResponseTime" : -1,"isAvailable" : False},ignore_index = True)
-        self.dfProxies.to_excel("proxies.xlsx",index=False)
+        if self.output.endswith(".xlsx"):
+            self.dfProxies.to_excel(self.output,index=False)
+        else : 
+            self.dfProxies.to_csv(self.output,index=False)
 
 if __name__ == "__main__":
 
@@ -52,10 +59,12 @@ if __name__ == "__main__":
     parser.add_argument('--country',default=None,type=str, help='Retrieve proxies from specific country')
     parser.add_argument('--maxNumber',default=10,type=int, help='The maximum number of proxies to test')
     parser.add_argument('--timeOut',default=2,type=int, help='timeout')
+    parser.add_argument('-o',default=2,type=int, help='output file')
 
     args = parser.parse_args()
-    print(args)
-    ips= proxiesExtractor(country = args.country)
+
+    assert args.o.endswith(".xlsx") or args.o.endswith(".csv") , "insert the path to an excel sheet or csv file!"
+    ips= proxiesExtractor(country = args.country,output=args.o)
     ips.testProxies(maxNumber = args.maxNumber, timeOut = args.timeOut)
 
 
