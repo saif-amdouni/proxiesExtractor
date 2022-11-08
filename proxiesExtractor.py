@@ -4,18 +4,18 @@ import pandas as pd
 from tqdm import tqdm
 
 class proxiesExtractor:
-    def __init__(self) -> None:
+    def __init__(self, country = None) -> None:
         self.proxyUrl = "https://free-proxy-list.net/"
         self.TestIpUrl = "http://httpbin.org/ip"
         self.dfProxies = pd.DataFrame(columns=["proxy","ResponseTime","isAvailable"])
         print("Getting free proxies from source ...!")
-        self.proxies = self.get_free_proxies()
+        self.proxies = self.get_free_proxies(country)
         if len(self.proxies)>0:
             print(f"Found {len(self.proxies)} proxies")
         else :
             print("no proxies found ! try again later.")
 
-    def get_free_proxies(self):
+    def get_free_proxies(self,country = None):
        
         soup = bs(requests.get(self.proxyUrl).content, 'html.parser')
         proxies = []
@@ -23,6 +23,9 @@ class proxiesExtractor:
             tds = row.find_all("td")
             try:
                 ip, port = tds[0].text.strip(), tds[1].text.strip()
+                
+                if country and (tds[2].text.strip() != country):
+                    continue
                 proxies.append(f"{ip}:{port}")
             except Exception as e:
                 continue
@@ -41,5 +44,5 @@ class proxiesExtractor:
         self.dfProxies.to_excel("proxies.xlsx",index=False)
 
 if __name__ == "__main__":
-    ips= proxiesExtractor()
+    ips= proxiesExtractor("US")
     ips.testProxies()
